@@ -9,9 +9,12 @@
 namespace app\api\controller\v1;
 
 
+use app\api\validate\IDMustBePostiveInt;
+
 class Banner
 {
     public function getBanner($id){
-        echo 111;
+        $res = (new IDMustBePostiveInt())->goCheck();
     }
+
 }
