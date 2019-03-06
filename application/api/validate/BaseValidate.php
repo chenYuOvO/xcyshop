@@ -23,11 +23,8 @@ class BaseValidate extends Validate
 
        $result = $this->check($params);
        if(!$result){
-           $e = new parameterException();
-           $e->msg =  $this->error;
+           $e = new parameterException(['msg'=>$this->error]);
            throw  $e;
-//           $error = $this->error;
-//           throw new Exception($error);
        }else{
            return true;
        }
