@@ -9,15 +9,19 @@
 namespace app\api\model;
 
 use think\Model;
+
 /**
  * Description of BannerItem
  *
  * @author admin
  */
-class BannerItem extends Model{
-    //put your code here
-    
+class BannerItem extends Model {
+
+    //隐藏不需要显示的字段SS
+    protected $hidden = ['id', 'img_id', 'banner_id', 'update_time', 'delete_time'];
+
     public function img() {
         return $this->belongsTo('Image', 'img_id', 'id');
     }
+
 }

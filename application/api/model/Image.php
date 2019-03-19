@@ -9,11 +9,15 @@
 namespace app\api\model;
 
 use think\Model;
+
 /**
  * Description of Image
  *
  * @author admin
  */
-class Image extends Model{
-    //put your code here
+class Image extends Model {
+
+    //隐藏不需要显示的字段
+    protected $hidden = ['id', 'from', 'update_time', 'delete_time'];
+
 }

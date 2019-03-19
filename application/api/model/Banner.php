@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Administrator
@@ -8,12 +9,14 @@
 
 namespace app\api\model;
 
-
 use think\Db;
 use think\Model;
 
-class Banner extends Model
-{
+class Banner extends Model {
+
+    //隐藏不需要显示的字段
+    protected $hidden = ['update_time', 'delete_time'];
+
     /**
      * 关联banner_item
      * @return type
@@ -21,8 +24,10 @@ class Banner extends Model
     public function items() {
         return $this->hasMany('BannerItem', 'banner_id', 'id');
     }
-    public static function getBannerByID($id){
-       $resutl =  Db::table('banner')->where('id','=',$id)->select();
-        return $resutl;
+
+    public static function getBannerByID($id) {
+        $banner = self::with(['items', 'items.img'])->find($id);
+        return $banner;
     }
+
 }
