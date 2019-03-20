@@ -15,7 +15,7 @@ use think\Model;
  *
  * @author admin
  */
-class BannerItem extends Model {
+class BannerItem extends BaseModel {
 
     //隐藏不需要显示的字段SS
     protected $hidden = ['id', 'img_id', 'banner_id', 'update_time', 'delete_time'];
