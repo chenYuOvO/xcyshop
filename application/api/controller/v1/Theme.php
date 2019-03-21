@@ -8,11 +8,16 @@
 
 namespace app\api\controller\v1;
 
+use app\api\validate\IDCollection;
 /**
  * Description of Theme
  *
  * @author admin
  */
 class Theme {
-    //put your code here
+
+    public function getSimpleList($ids ='') {
+        (new IDCollection())->goCheck();
+    }
+
 }

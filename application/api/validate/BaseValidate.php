@@ -29,4 +29,19 @@ class BaseValidate extends Validate
            return true;
        }
     }
+    /**
+     * 参数是否为正整数
+     * @param type $values
+     * @param type $rule
+     * @param type $data
+     * @param type $fields
+     * @return boolean
+     */
+    protected function isPostiveIntager($values,$rule='',$data='',$fields=''){
+        if(preg_match("/^[1-9][0-9]*$/" ,$values)){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
 }

@@ -16,12 +16,8 @@ class IDMustBePostiveInt extends BaseValidate
     protected $rule = [
         'id'=>'require|isPostiveIntager',
     ];
-
-    protected function isPostiveIntager($values,$rule,$data,$fields){
-        if(preg_match("/^[1-9][0-9]*$/" ,$values)){
-            return true;
-        }else{
-            return $fields.'必须为正整数';
-        }
-    }
+    
+    protected $message = [
+        'id'=>'id必须为正整数',
+    ];
 }
