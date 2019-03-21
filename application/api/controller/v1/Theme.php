@@ -17,7 +17,12 @@ use app\lib\exception\ThemeException;
  * @author admin
  */
 class Theme {
-
+    /**
+     * 首页精选主题
+     * @param type $ids
+     * @return type
+     * @throws ThemeException
+     */
     public function getSimpleList($ids ='') {
         (new IDCollection())->goCheck();
         $ids = explode(',', $ids);
@@ -27,5 +32,7 @@ class Theme {
         }
         return $result;
     }
+    public function getComplexOne($id) {
 
+    }
 }
