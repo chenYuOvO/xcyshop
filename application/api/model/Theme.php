@@ -30,8 +30,14 @@ class Theme extends BaseModel {
     public function products() {
         return $this->belongsToMany('Product', 'theme_product', 'product_id', 'theme_id');
     }
+    /**
+     * 获取某个主题下的商品
+     * @param type $id
+     * @return type
+     */
     public static function getThemeWithProducts($id) {
         $theme = self::with('products,topicImg,headImg')->find($id);
         return $theme;
     }
+
 }

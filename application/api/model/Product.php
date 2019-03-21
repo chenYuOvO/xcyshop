@@ -13,6 +13,8 @@ namespace app\api\model;
  *
  * @author admin
  */
-class Product extends BaseModel{
+class Product extends BaseModel {
+
+    protected $hidden = ['update_time', 'create_time', 'delete_time', 'category_id', 'from', 'pivot'];
 
 }
