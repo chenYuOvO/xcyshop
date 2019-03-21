@@ -13,23 +13,26 @@ namespace app\api\validate;
  *
  * @author admin
  */
-class IDCollection extends BaseValidate{
+class IDCollection extends BaseValidate {
+
     protected $rule = [
-        'ids'=>'require|checkIDs',
+        'ids' => 'require|checkIDs',
     ];
     protected $message = [
-        'ids'=>'ids必须是以逗号隔开的正整数'
+        'ids' => 'ids必须是以逗号隔开的正整数'
     ];
+
     protected function checkIDs($value) {
         $values = explode(',', $value);
-        if(empty($values)){
+        if (empty($values)) {
             return FALSE;
         }
         foreach ($values as $id) {
-            if(!$this->isPostiveIntager($id)){
+            if (!$this->isPostiveIntager($id)) {
                 return FALSE;
             }
         }
         return TRUE;
     }
+
 }

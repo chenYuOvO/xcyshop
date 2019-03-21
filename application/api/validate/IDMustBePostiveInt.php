@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Administrator
@@ -8,16 +9,15 @@
 
 namespace app\api\validate;
 
-
 use think\Validate;
 
-class IDMustBePostiveInt extends BaseValidate
-{
+class IDMustBePostiveInt extends BaseValidate {
+
     protected $rule = [
-        'id'=>'require|isPostiveIntager',
+        'id' => 'require|isPostiveIntager',
     ];
-    
     protected $message = [
-        'id'=>'id必须为正整数',
+        'id' => 'id必须为正整数',
     ];
+
 }
