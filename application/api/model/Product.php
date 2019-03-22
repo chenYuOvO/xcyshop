@@ -22,12 +22,20 @@ class Product extends BaseModel {
     }
 
     /**
-     * 最近新品
+     * 首页-最近新品
      * @param type $count
      */
     public static function getMostRecent($count) {
         $products = self::limit($count)->order('create_time desc')->select();
         return $products;
     }
-
+    /**
+     * 分类下的商品
+     * @param type $categoryID
+     * @return type
+     */
+   public static function getProductsByCategoryID($categoryID){
+       $products = self::where('category_id','=',$categoryID)->select();
+       return $products;
+   }
 }
