@@ -21,4 +21,13 @@ class Product extends BaseModel {
         return $this->prefixImgUrl($value, $data);
     }
 
+    /**
+     * 最近新品
+     * @param type $count
+     */
+    public static function getMostRecent($count) {
+        $products = self::limit($count)->order('create_time desc')->select();
+        return $products;
+    }
+
 }
