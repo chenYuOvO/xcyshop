@@ -22,9 +22,10 @@ class Product {
     public function getRecent($count = 15) {
         (new Count())->goCheck();
         $products = ProductModel::getMostRecent($count);
-        if (!$products) {
+        if ($products->isEmpty()) {
             throw new ProductException();
         }
+        $products->hidden(['summary']);
         return $products;
     }
 

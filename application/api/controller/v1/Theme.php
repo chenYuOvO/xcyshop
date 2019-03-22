@@ -30,12 +30,17 @@ class Theme {
         (new IDCollection())->goCheck();
         $ids = explode(',', $ids);
         $result = ThemeModel::with('topicImg,headImg')->select($ids);
-        if (!$result) {
+        if ($result->isEmpty()) {
             throw new ThemeException();
         }
         return $result;
     }
-
+    /**
+     * 获取某个主题下的商品
+     * @param type $id
+     * @return type
+     * @throws ThemeException
+     */
     public function getComplexOne($id) {
         (new IDMustBePostiveInt())->goCheck();
         $theme = ThemeModel::getThemeWithProducts($id);
