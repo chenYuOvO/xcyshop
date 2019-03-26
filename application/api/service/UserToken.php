@@ -9,6 +9,7 @@
 namespace app\api\service;
 
 use \think\Exception;
+use app\lib\exception\WeChatException;
 
 /**
  * Description of UserToken
@@ -28,6 +29,7 @@ class UserToken {
         $this->wxAppSecret = config('wx.app_secret');
         $this->wxLoginUrl = sprintf(config('wx.login_url'), $this->wxAppID, $this->wxAppSecret, $this->code);
     }
+
     /**
      * 获取session_key和openID
      * @throws Exception
@@ -41,10 +43,32 @@ class UserToken {
             $loginFail = array_key_exists('errcode', $wxResult);
             if ($loginFail) {
                 //获取失败
+                $this->processLoginErr($wxResult);
             } else {
                 //获取成功
+                $this->grantToken($wxResult);
             }
         }
+    }
+
+    private function grantToken($wxResult) {
+        //拿到openid
+        //查看数据库中是否有openid,如果不存在，新增数据;
+        //生成令牌
+        //准备缓存数据，写入缓存，
+        //把令牌返回给客户端
+        $openid = $wxResult['openid'];
+        var_dump($openid);
+        return $openid;
+    }
+
+    /**
+     * 返回微信端错误信息
+     * @param type $wxResult
+     * @throws WeChatException
+     */
+    private function processLoginErr($wxResult) {
+        throw new WeChatException(['msg' => $wxResult['errmsg'], 'errorCode' => $wxResult['errcode']]);
     }
 
 }
