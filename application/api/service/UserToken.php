@@ -11,13 +11,13 @@ namespace app\api\service;
 use \think\Exception;
 use app\lib\exception\WeChatException;
 use app\api\model\User as UserModel;
-
+use app\lib\exception\TokenException;
 /**
  * Description of UserToken
  *
  * @author admin
  */
-class UserToken {
+class UserToken extends Token {
 
     protected $code;
     protected $wxAppID;
@@ -47,7 +47,7 @@ class UserToken {
                 $this->processLoginErr($wxResult);
             } else {
                 //获取成功
-                $this->grantToken($wxResult);
+                return $this->grantToken($wxResult);
             }
         }
     }
@@ -68,20 +68,27 @@ class UserToken {
             $uid = $this->newUser($openid);
         }
         $cachedValue = $this->prepareCachedValue($wxResult, $uid);
-
-        return $openid;
+        $token  = $this->saveToCache($cachedValue);
+        return $token;
     }
 
     /**
-     * 
+     * 写入缓存
      * @param type $cachedValue
      */
     private function saveToCache($cachedValue) {
-        $key = generateToken();
+        $key = self::generateToken();
+        $value = json_encode($cachedValue);
+        $expire_in = config('setting.token_expire_in');
+        $request = cache($key, $value, $expire_in);
+        if(!$request){
+            throw new TokenException(['msg'=>'服务器异常','errorCode'=>10005,]);
+        }
+        return $key;
     }
 
     /**
-     * 组装缓存数据
+     * 准备缓存数据
      * value: wxResult,uid ,scope
      * @param type $wxResult
      * @param type $uid

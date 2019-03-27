@@ -6,16 +6,17 @@
  * and open the template in the editor.
  */
 
-namespace app\api\model;
+namespace app\lib\exception;
 
 /**
- * Description of User
+ * Description of TokenException
  *
  * @author admin
  */
-class User extends BaseModel{
-    public static function getByOpenID($openid) {
-        $user = self::where('openid','=',$openid)->find();
-        return $user;
-    }
+class TokenException extends BaseException {
+
+    public $code = 401;
+    public $msg = "Token已过期或无效";
+    public $errorCode = 10001;
+
 }
