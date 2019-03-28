@@ -53,7 +53,10 @@ class Product extends BaseModel {
      * @param type $id
      */
     public static function getProductDetail($id) {
-        $product = self::with('imgs,properties')->find($id);
+        $product = self::with(['properties'])->with([
+            'imgs'=>function($query){
+                $query->with('imgUrl')->order('order','asc');
+            }])->find($id);
         return $product;
     }
 
