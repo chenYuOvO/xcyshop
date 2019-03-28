@@ -21,6 +21,14 @@ class Product extends BaseModel {
         return $this->prefixImgUrl($value, $data);
     }
 
+    public function imgs() {
+        return $this->hasMany('ProductImage', 'product_id', 'id');
+    }
+
+    public function properties() {
+        return $this->hasMany('ProductProperty', 'product_id', 'id');
+    }
+
     /**
      * 首页-最近新品
      * @param type $count
@@ -29,13 +37,24 @@ class Product extends BaseModel {
         $products = self::limit($count)->order('create_time desc')->select();
         return $products;
     }
+
     /**
      * 分类下的商品
      * @param type $categoryID
      * @return type
      */
-   public static function getProductsByCategoryID($categoryID){
-       $products = self::where('category_id','=',$categoryID)->select();
-       return $products;
-   }
+    public static function getProductsByCategoryID($categoryID) {
+        $products = self::where('category_id', '=', $categoryID)->select();
+        return $products;
+    }
+
+    /**
+     * 获取商品详情
+     * @param type $id
+     */
+    public static function getProductDetail($id) {
+        $product = self::with('imgs,properties')->find($id);
+        return $product;
+    }
+
 }

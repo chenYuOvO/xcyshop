@@ -12,6 +12,7 @@ use app\api\validate\Count;
 use app\api\model\Product as ProductModel;
 use app\lib\exception\ProductException;
 use app\api\validate\IDMustBePostiveInt;
+
 /**
  * Description of Product
  *
@@ -35,13 +36,35 @@ class Product {
         return $products;
     }
 
+    /**
+     * 分类下所有商品
+     * @param type $id
+     * @return type
+     * @throws ProductException
+     */
     public function getAllInCategory($id) {
         (new IDMustBePostiveInt())->goCheck();
         $products = ProductModel::getProductsByCategoryID($id);
-        if($products->isEmpty()){
+        if ($products->isEmpty()) {
             throw new ProductException();
         }
         $products->hidden(['summary']);
         return $products;
     }
+
+    /**
+     * 商品详情
+     * @param type $id
+     * @return type
+     * @throws ProductException
+     */
+    public function getOne($id) {
+        (new IDMustBePostiveInt())->goCheck();
+        $product = ProductModel::getProductDetail($id);
+        if (!$product) {
+            throw new ProductException();
+        }
+        return $product;
+    }
+
 }
