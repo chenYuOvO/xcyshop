@@ -40,7 +40,7 @@ class Address {
         } else {
             $user->address->save($dataArray);
         }
-        return new SuccessMassage();
+        return json((new SuccessMassage()),201);
     }
 
 }
