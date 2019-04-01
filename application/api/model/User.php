@@ -13,9 +13,15 @@ namespace app\api\model;
  *
  * @author admin
  */
-class User extends BaseModel{
+class User extends BaseModel {
+
+    public function address() {
+        return $this->hasOne('UserAddress', 'user_id', 'id');
+    }
+
     public static function getByOpenID($openid) {
-        $user = self::where('openid','=',$openid)->find();
+        $user = self::where('openid', '=', $openid)->find();
         return $user;
     }
+
 }
