@@ -13,13 +13,34 @@ use app\api\service\Token as TokenService;
 use app\api\model\User as UserModel;
 use app\lib\exception\UserException;
 use app\lib\exception\SuccessMassage;
+use think\Controller;
+use app\lib\enum\ScopeEnum;
+use app\lib\exception\forbiddenException;
+use app\lib\exception\TokenException;
 
 /**
  * Description of Address
  *
  * @author admin
  */
-class Address {
+class Address extends Controller {
+
+    protected $beforeActionList = [
+        'checkPrimaryScope' => ['only' => 'createOrUpdateAddress'],
+    ];
+
+    protected function checkPrimaryScope() {
+        $scope = TokenService::getCurrentTokenVar('scope');
+        if ($scope) {
+            if ($scope >= ScopeEnum::User) {
+                return TRUE;
+            } else {
+                throw new forbiddenException();
+            }
+        } else {
+            throw new TokenException();
+        }
+    }
 
     public function createOrUpdateAddress() {
         $validate = new AddressNew();
@@ -40,7 +61,7 @@ class Address {
         } else {
             $user->address->save($dataArray);
         }
-        return json((new SuccessMassage()),201);
+        return json((new SuccessMassage()), 201);
     }
 
 }
