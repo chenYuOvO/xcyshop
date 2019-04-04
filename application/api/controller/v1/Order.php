@@ -8,8 +8,8 @@
 
 namespace app\api\controller\v1;
 
-use think\Controller;
 use app\api\controller\BaseController;
+use app\api\validate\OrderPlace;
 
 /**
  * Description of Order
@@ -31,8 +31,11 @@ class Order extends BaseController {
         'checkExclusiveScope' => ['only' => 'placeOrder']
     ];
 
+    /**
+     * 订单支付
+     */
     public function placeOrder() {
-        
+        (new OrderPlace())->goCheck();
     }
 
 }

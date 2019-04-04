@@ -10,7 +10,7 @@
 namespace app\lib\exception;
 
 
-class parameterException extends BaseException
+class ParameterException extends BaseException
 {
     public $code = 400;//HTTP 状态码 400 500
     public $msg = '参数错误';//错误具体信息

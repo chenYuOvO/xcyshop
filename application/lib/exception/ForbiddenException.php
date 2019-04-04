@@ -13,7 +13,7 @@ namespace app\lib\exception;
  *
  * @author admin
  */
-class forbiddenException extends BaseException{
+class ForbiddenException extends BaseException{
 
     public $code = 403;
     public $msg = "权限不够";
