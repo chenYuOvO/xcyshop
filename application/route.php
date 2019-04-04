@@ -19,7 +19,7 @@ Route::get('api/:version/theme/:id', 'api/:version.Theme/getComplexOne');
 
 
 Route::get('api/:version/product/by_category', 'api/:version.Product/getAllInCategory');
-Route::get('api/:version/product/:id', 'api/:version.Product/getOne',[],['id'=>'\d+']);
+Route::get('api/:version/product/:id', 'api/:version.Product/getOne', [], ['id' => '\d+']);
 Route::get('api/:version/product/recent', 'api/:version.Product/getRecent');
 //路由分组
 //Route::group('api/:version/product', function(){
@@ -32,3 +32,5 @@ Route::get('api/:version/category/all', 'api/:version.Category/getAllCategories'
 Route::post('api/:version/token/user', 'api/:version.Token/getToken');
 
 Route::post('api/:version/address', 'api/:version.Address/createOrUpdateAddress');
+
+Route::post('api/:version/order', 'api/:version.Order/placeOrder');
