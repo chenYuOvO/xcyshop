@@ -10,14 +10,15 @@ namespace app\api\service;
 
 use app\api\model\Product;
 use app\lib\exception\OrderException;
+use app\api\model\UserAddress;
+use app\lib\exception\UserException;
 
 /**
  * Description of Order
  *
  * @author admin
  */
-class Order
-{
+class Order {
 
     //订单商品列表，客户端传过来的products参数
     protected $oProducts;
@@ -25,25 +26,62 @@ class Order
     protected $products;
     protected $uid;
 
-    protected function place($uid, $oproducts)
-    {
+    public function place($uid, $oproducts) {
         //$oproducts和$products作对比
         //products从数据库中查出来
         $this->oProducts = $oproducts;
         $this->products = $this->getProductsByOrder($oproducts);
         $this->uid = $uid;
-        $status = $this->getoOrderStatus();
-        if(!$status['pass']){
+        $status = $this->getOrderStatus();
+        if (!$status['pass']) {
             $status['order_id'] = -1;
             return $status;
         }
         //开始创建订单
-        
+        $this->snapOrder($status);
+    }
+
+    /**
+     * 创建快照
+     * @param type $status
+     */
+    private function snapOrder($status) {
+        $snap = [
+            'orderPrice' => 0,
+            'totalCount' => 0,
+            'pStatus' => [],
+            'snapAddress' => NULL,
+            'snapName' => '',
+            'snapImg' => ''
+        ];
+        $snap['orderPrice'] = $status['orderPrice'];
+        $snap['totalCount'] = $status['totalCount'];
+        $snap['pStatus'] = $status['pStatusArray'];
+        $snap['snapAddress'] = json_encode($this->getUserAddress);
+        $snap['snapName'] = $this->products['0']['name'];
+        $snap['snapImg'] = $this->products['0']['main_img_url'];
+        if (count($this->products) > 1) {
+            $snap['snapName'] .='等';
+        }
+    }
+
+    /**
+     * 获取用户收货地址
+     * @param type $param
+     */
+    private function getUserAddress() {
+        $userAddress = UserAddress::where('user_id', '=', $this->uid)->find();
+        if (!$userAddress) {
+            throw new UserException([
+        'msg' => '用户收货地址不存在，下单失败',
+        'errorCode' => 60001,
+            ]);
+        }
+        return $userAddress->toArray();
     }
 
     //根据订单查找真实商品信息
-    protected function getProductsByOrder($oProducts)
-    {
+    private function getProductsByOrder($oProducts) {
         $oPIDs = [];
         foreach ($oProducts as $value) {
             array_push($oPIDs, $value['product_id']);
@@ -52,11 +90,11 @@ class Order
         return $products;
     }
 
-    private function getoOrderStatus()
-    {
+    private function getOrderStatus() {
         $status = [
             'pass' => true,
             'orderPrice' => 0,
+            'totalCount' => 0,
             'pStatusArray' => [],
         ];
         foreach ($this->oProducts as $oProduct) {
@@ -65,13 +103,13 @@ class Order
                 $status['pass'] = false;
             }
             $status['orderPrice'] += $pStatus['totalPrice'];
+            $status['totalCount'] += $pStatus['count'];
             array_push($status['pStatusArray'], $pStatus);
         }
         return $status;
     }
 
-    private function getProductStatus($oPID, $oCount, $products)
-    {
+    private function getProductStatus($oPID, $oCount, $products) {
         $pIndex = -1;
         $pStatus = [
             'id' => null,
@@ -99,4 +137,5 @@ class Order
         }
         return $pStatus;
     }
+
 }
