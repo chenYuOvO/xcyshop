@@ -32,6 +32,13 @@ class Order
         $this->oProducts = $oproducts;
         $this->products = $this->getProductsByOrder($oproducts);
         $this->uid = $uid;
+        $status = $this->getoOrderStatus();
+        if(!$status['pass']){
+            $status['order_id'] = -1;
+            return $status;
+        }
+        //开始创建订单
+        
     }
 
     //根据订单查找真实商品信息
