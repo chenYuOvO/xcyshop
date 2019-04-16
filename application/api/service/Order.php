@@ -13,7 +13,7 @@ use app\lib\exception\OrderException;
 use app\api\model\UserAddress;
 use app\lib\exception\UserException;
 use app\api\model\Order as OrderModel;
-
+use app\api\model\OrderProduct;
 /**
  * Description of Order
  *
@@ -108,7 +108,7 @@ class Order {
         $snap['orderPrice'] = $status['orderPrice'];
         $snap['totalCount'] = $status['totalCount'];
         $snap['pStatus'] = $status['pStatusArray'];
-        $snap['snapAddress'] = json_encode($this->getUserAddress);
+        $snap['snapAddress'] = json_encode($this->getUserAddress());
         $snap['snapName'] = $this->products['0']['name'];
         $snap['snapImg'] = $this->products['0']['main_img_url'];
         if (count($this->products) > 1) {
@@ -170,9 +170,9 @@ class Order {
             'name' => '',
             'totalPrice' => 0
         ];
-        for ($i = 0; $i <= count($products); $i++) {
+        for ($i = 0; $i < count($products); $i++) {
             if ($oPID == $products[$i]['id']) {
-                $pIndex = $oPID;
+                $pIndex = $i;
             }
         }
         if ($pIndex == -1) {
@@ -183,7 +183,7 @@ class Order {
             $pStatus['count'] = $oCount;
             $pStatus['name'] = $product['name'];
             $pStatus['totalPrice'] = $product['price'] * $oCount;
-            if ($product['stock'] - $oCount <= 0) {
+            if ($product['stock'] - $oCount >= 0) {
                 $pStatus['haveStock'] = true;
             }
         }

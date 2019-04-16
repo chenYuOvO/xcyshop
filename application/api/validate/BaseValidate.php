@@ -58,7 +58,7 @@ class BaseValidate extends Validate {
      * @param type $fields
      * @return boolean
      */
-    protected function isPostiveIntager($values, $rule = '', $data = '', $fields = '') {
+    protected function isPositiveInteger($values, $rule = '', $data = '', $fields = '') {
         if (preg_match("/^[1-9][0-9]*$/", $values)) {
             return TRUE;
         } else {

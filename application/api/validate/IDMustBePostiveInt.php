@@ -14,7 +14,7 @@ use think\Validate;
 class IDMustBePostiveInt extends BaseValidate {
 
     protected $rule = [
-        'id' => 'require|isPostiveIntager',
+        'id' => 'require|isPositiveInteger',
     ];
     protected $message = [
         'id' => 'id必须为正整数',
