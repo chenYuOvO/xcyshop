@@ -15,6 +15,7 @@ namespace app\api\model;
  */
 class Order extends BaseModel {
 
+    protected $autoWriteTimestamp = true;
     protected $hidden = ['user_id', 'delete_time', 'update_time'];
 
 }
