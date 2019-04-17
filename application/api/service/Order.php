@@ -15,6 +15,7 @@ use app\lib\exception\UserException;
 use app\api\model\Order as OrderModel;
 use app\api\model\OrderProduct;
 use think\Db;
+
 /**
  * Description of Order
  *
@@ -72,7 +73,7 @@ class Order {
             }
             $orderProduct = new OrderProduct();
             $orderProduct->saveAll($this->oProducts);
-            Db::commit(); 
+            Db::commit();
             return [
                 'order_no' => $orderNo,
                 'order_id' => $orderID,
@@ -144,6 +145,14 @@ class Order {
         }
         $products = Product::all($oPIDs)->visible(['id', 'price', 'stock', 'name', 'main_img_url'])->toArray();
         return $products;
+    }
+
+    public function checkOrderStock($orderID) {
+        $oproducts = OrderProduct::where('order_id', '=', $orderID)->select();
+        $this->oProducts = $oproducts;
+        $this->products = $this->getProductsByOrder($oproducts);
+        $status = $this->getOrderStatus();
+        return $status;
     }
 
     private function getOrderStatus() {
