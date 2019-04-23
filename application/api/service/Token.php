@@ -13,6 +13,7 @@ use think\Request;
 use app\lib\exception\TokenException;
 use app\lib\enum\ScopeEnum;
 use app\lib\exception\forbiddenException;
+use think\Exception;
 
 /**
  * Description of Token
@@ -90,6 +91,18 @@ class Token {
         } else {
             throw new TokenException();
         }
+    }
+
+//检测uid 是否和当前登录人uid相同
+    public static function isValidOperate($checkedUID) {
+        if (!$checkedUID) {
+            throw new Exception();
+        }
+        $currentOperateUID = self::getCurrentUid();
+        if ($currentOperateUID == $checkedUID) {
+            return true;
+        }
+        return false;
     }
 
 }
