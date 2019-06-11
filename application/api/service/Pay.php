@@ -66,7 +66,7 @@ class Pay {
         $wxOrderData->SetOut_trade_no($this->orderNo);
         $wxOrderData->SetTrade_type('JSAPI');
         $wxOrderData->SetTotal_fee($totalPrice * 100);
-        $wxOrderData->SetBody('加入书院《刘连阳》费用:0.01元');
+        $wxOrderData->SetBody('aa');
         $wxOrderData->SetOpenid($openid);
         $wxOrderData->SetNotify_url('');
         return $this->getPaySignature($wxOrderData);
@@ -74,14 +74,21 @@ class Pay {
 
     private function getPaySignature($wxOrderData) {
         $config = new \WxPayConfig();
-        $wxOrder = \WxPayApi::unifiedOrder($config,$wxOrderData);
+        $wxOrder = \WxPayApi::unifiedOrder($config, $wxOrderData);
         // 失败时不会返回result_code
-        if($wxOrder['return_code'] != 'SUCCESS' || $wxOrder['result_code'] !='SUCCESS'){
-            Log::record($wxOrder,'error');
-            Log::record('获取预支付订单失败','error');
+        if ($wxOrder['return_code'] != 'SUCCESS' || $wxOrder['result_code'] != 'SUCCESS') {
+            Log::record($wxOrder, 'error');
+            Log::record('获取预支付订单失败', 'error');
 //            throw new Exception('获取预支付订单失败');
-        }        
+        }
+        $this->recordPreOrder($wxOrder);
     }
+
+    private function recordPreOrder($wxOrder) {
+        // 必须是update，每次用户取消支付后再次对同一订单支付，prepay_id是不同的
+        OrderModel::where('id', '=', $this->orderID)->update(['prepay_id' => $wxOrder['prepay_id']]);
+    }
+
     //订单号可能不存在
     //订单号确实存在，但订单号和当前用户不匹配
     //订单号可能已经被支付
