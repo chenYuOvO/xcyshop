@@ -27,7 +27,7 @@ Loader::import('WxPay.WxPay', EXTEND_PATH, '.Api.php');
 class Pay {
 
     private $orderID;
-    private $orderNO;
+    private $orderNo;
 
     public function __construct($orderID) {
         if (!$orderID) {
@@ -58,21 +58,23 @@ class Pay {
      * @throws TokenException
      */
     private function makeWxPreOrder($totalPrice) {
-        $openid = Token::getCurrentTokenVar('token');
+        $openid = Token::getCurrentTokenVar('openid');
         if (!$openid) {
             throw new TokenException();
         }
         $wxOrderData = new \WxPayUnifiedOrder();
-        $wxOrderData->SetOut_trade_no($this->orderNO);
+        $wxOrderData->SetOut_trade_no($this->orderNo);
         $wxOrderData->SetTrade_type('JSAPI');
         $wxOrderData->SetTotal_fee($totalPrice * 100);
-        $wxOrderData->SetBody('零时商城');
+        $wxOrderData->SetBody('加入书院《刘连阳》费用:0.01元');
         $wxOrderData->SetOpenid($openid);
         $wxOrderData->SetNotify_url('');
+        return $this->getPaySignature($wxOrderData);
     }
 
     private function getPaySignature($wxOrderData) {
-        $wxOrder = \WxPayApi::unifiedOrder($wxOrderData);
+        $config = new \WxPayConfig();
+        $wxOrder = \WxPayApi::unifiedOrder($config,$wxOrderData);
         // 失败时不会返回result_code
         if($wxOrder['return_code'] != 'SUCCESS' || $wxOrder['result_code'] !='SUCCESS'){
             Log::record($wxOrder,'error');
