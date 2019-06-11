@@ -14,7 +14,9 @@ use app\lib\exception\OrderException;
 use app\lib\exception\TokenException;
 use app\api\service\Token;
 use app\lib\enum\OrderStatusEnum;
+use think\Loader;
 
+Loader::import('WxPay.WxPay', EXTEND_PATH, '.Api.php');
 /**
  * Description of Pay
  *
@@ -48,6 +50,13 @@ class Pay {
         return $this->makeWxPreOrder($status['orderPrice']);
     }
 
+    private function makeWxPreOrder() {
+        $openid = Token::getCurrentTokenVar('token');
+        if(!$openid){
+            throw new TokenException();
+        }
+        $wxOrderData = new \WxPayUnifiedOrder();
+    }
     //订单号可能不存在
     //订单号确实存在，但订单号和当前用户不匹配
     //订单号可能已经被支付
