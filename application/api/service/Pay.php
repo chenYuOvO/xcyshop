@@ -15,8 +15,10 @@ use app\lib\exception\TokenException;
 use app\api\service\Token;
 use app\lib\enum\OrderStatusEnum;
 use think\Loader;
+use think\Log;
 
 Loader::import('WxPay.WxPay', EXTEND_PATH, '.Api.php');
+
 /**
  * Description of Pay
  *
@@ -44,18 +46,39 @@ class Pay {
 
         $orderService = new OrderService();
         $status = $orderService->checkOrderStock($this->orderID);
-        if (!$status['pass']){
+        if (!$status['pass']) {
             return $status;
         }
         return $this->makeWxPreOrder($status['orderPrice']);
     }
 
-    private function makeWxPreOrder() {
+    /**
+     * 创建预订单
+     * @param type $totalPrice
+     * @throws TokenException
+     */
+    private function makeWxPreOrder($totalPrice) {
         $openid = Token::getCurrentTokenVar('token');
-        if(!$openid){
+        if (!$openid) {
             throw new TokenException();
         }
         $wxOrderData = new \WxPayUnifiedOrder();
+        $wxOrderData->SetOut_trade_no($this->orderNO);
+        $wxOrderData->SetTrade_type('JSAPI');
+        $wxOrderData->SetTotal_fee($totalPrice * 100);
+        $wxOrderData->SetBody('零时商城');
+        $wxOrderData->SetOpenid($openid);
+        $wxOrderData->SetNotify_url('');
+    }
+
+    private function getPaySignature($wxOrderData) {
+        $wxOrder = \WxPayApi::unifiedOrder($wxOrderData);
+        // 失败时不会返回result_code
+        if($wxOrder['return_code'] != 'SUCCESS' || $wxOrder['result_code'] !='SUCCESS'){
+            Log::record($wxOrder,'error');
+            Log::record('获取预支付订单失败','error');
+//            throw new Exception('获取预支付订单失败');
+        }        
     }
     //订单号可能不存在
     //订单号确实存在，但订单号和当前用户不匹配
