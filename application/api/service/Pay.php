@@ -82,13 +82,31 @@ class Pay {
 //            throw new Exception('获取预支付订单失败');
         }
         $this->recordPreOrder($wxOrder);
+        $signature = $this->sign($wxOrder);
+        return $signature;
     }
 
     private function recordPreOrder($wxOrder) {
         // 必须是update，每次用户取消支付后再次对同一订单支付，prepay_id是不同的
         OrderModel::where('id', '=', $this->orderID)->update(['prepay_id' => $wxOrder['prepay_id']]);
     }
-
+    
+    // 小程序调起支付 所需的字段
+    private function sign($wxOrder)
+    {
+        $jsApiPayData = new \WxPayJsApiPay();
+        $jsApiPayData->SetAppid(config('wx.app_id'));
+        $jsApiPayData->SetTimeStamp((string)time());
+        $rand = md5(time() . mt_rand(0, 1000));
+        $jsApiPayData->SetNonceStr($rand);
+        $jsApiPayData->SetPackage('prepay_id=' . $wxOrder['prepay_id']);
+        $jsApiPayData->SetSignType('md5');
+        $sign = $jsApiPayData->MakeSign();
+        $rawValues = $jsApiPayData->GetValues();
+        $rawValues['paySign'] = $sign;
+        unset($rawValues['appId']);
+        return $rawValues;
+    }
     //订单号可能不存在
     //订单号确实存在，但订单号和当前用户不匹配
     //订单号可能已经被支付
