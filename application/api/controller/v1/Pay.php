@@ -11,6 +11,7 @@ namespace app\api\controller\v1;
 use app\api\controller\BaseController;
 use app\api\validate\IDMustBePostiveInt;
 use app\api\service\Pay as PayService;
+
 /**
  * Description of Pay
  *
@@ -22,10 +23,22 @@ class Pay extends BaseController {
         'checkExclusiveScope' => ['only' => 'placeOrder']
     ];
 
-    public function getPreOrder($id='') {
+    /**
+     * 微信支付-预订单
+     * @param type $id
+     * @return type
+     */
+    public function getPreOrder($id = '') {
         (new IDMustBePostiveInt())->goCheck();
         $pay = new PayService($id);
         return $pay->pay();
+    }
+
+    /**
+     * 微信支付回调
+     */
+    public function receiveNotify() {
+        
     }
 
 }
