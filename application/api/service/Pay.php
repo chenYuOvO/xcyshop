@@ -68,7 +68,7 @@ class Pay {
         $wxOrderData->SetTotal_fee($totalPrice * 100);
         $wxOrderData->SetBody('aa');
         $wxOrderData->SetOpenid($openid);
-        $wxOrderData->SetNotify_url('');
+        $wxOrderData->SetNotify_url(config('secure.pay_back_url'));
         return $this->getPaySignature($wxOrderData);
     }
 

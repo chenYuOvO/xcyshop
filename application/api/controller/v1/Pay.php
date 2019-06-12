@@ -11,7 +11,9 @@ namespace app\api\controller\v1;
 use app\api\controller\BaseController;
 use app\api\validate\IDMustBePostiveInt;
 use app\api\service\Pay as PayService;
+use app\api\service\WxNotify;
 
+Loader::import('WxPay.WxPay', EXTEND_PATH, '.Api.php');
 /**
  * Description of Pay
  *
@@ -42,7 +44,9 @@ class Pay extends BaseController {
         //2.跟新订单状态
         //3.减库存
         //如果处理成功，向微信返回处理成功信息，否则，返回处理不成功信息
-        
+        $config = $config = new \WxPayConfig();
+        $notify = new WxNotify();
+        $notify->Handle($config);
     }
 
 }
