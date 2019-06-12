@@ -38,6 +38,10 @@ class Pay extends BaseController {
      * 微信支付回调
      */
     public function receiveNotify() {
+        //1.检测库存量
+        //2.跟新订单状态
+        //3.减库存
+        //如果处理成功，向微信返回处理成功信息，否则，返回处理不成功信息
         
     }
 
