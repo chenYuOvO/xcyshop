@@ -20,9 +20,9 @@ class Order extends BaseModel {
 
     public static function getSummaryByUser($uid, $page = 1, $size = 15) {
 
-        $paginateData = self::where(['user_id', '=', $uid])
+        $paginateData = self::where('user_id', '=', $uid)
                 ->order('create_time desc')
-                ->paginate($size, FALSE, ['page' => $page]);
+                ->paginate($size, true, ['page' => $page]);
         return $paginateData;
     }
 

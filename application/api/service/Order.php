@@ -15,7 +15,7 @@ use app\lib\exception\UserException;
 use app\api\model\Order as OrderModel;
 use app\api\model\OrderProduct;
 use think\Db;
-use app\api\validate\pagingParameter;
+
 
 /**
  * Description of Order
@@ -202,28 +202,6 @@ class Order {
             }
         }
         return $pStatus;
-    }
-
-    /**
-     * 历史订单
-     * @param type $page
-     * @param type $size
-     */
-    public function getSummaryByUser($page = 1, $size = 15) {
-        (new pagingParameter())->goCheck();
-        $uid = Token::getCurrentUid();
-        $pagingOrders = OrderModel::getSummaryByUser($uid, $page, $size);
-        if ($pagingOrders->isEmpty()) {
-            return [
-                'data' => [],
-                'current_page' => $pagingOrders->getCurrentPage(),
-            ];
-        }
-        $data = $pagingOrders->toArray();
-        return [
-            'data' => $data,
-            'current_page' => $pagingOrders->getCurrentPage(),
-        ];
     }
 
 }

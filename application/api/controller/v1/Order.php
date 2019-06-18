@@ -12,6 +12,8 @@ use app\api\controller\BaseController;
 use app\api\validate\OrderPlace;
 use app\api\service\Token as TokenService;
 use app\api\service\Order as OrderService;
+use app\api\model\Order as OrderModel;
+use app\api\validate\pagingParameter;
 /**
  * Description of Order
  *
@@ -30,7 +32,8 @@ class Order extends BaseController {
     //支付成功，也要检测库存量
     //支付成功后，减去库存量；失败，返回一个失败的结果
     protected $beforeActionList = [
-        'checkExclusiveScope' => ['only' => 'placeOrder']
+        'checkExclusiveScope' => ['only' => 'placeOrder'],
+        'checkPrimaryScope' => ['only' => 'getSummaryByUser']
     ];
 
     /**
@@ -44,5 +47,25 @@ class Order extends BaseController {
         $status = $order->place($uid, $products);
         return $status;
     }
-
+    /**
+     * 历史订单
+     * @param type $page
+     * @param type $size
+     */
+    public function getSummaryByUser($page = 1, $size = 15) {
+        (new pagingParameter())->goCheck();
+        $uid = TokenService::getCurrentUid();
+        $pagingOrders = OrderModel::getSummaryByUser($uid, $page, $size);
+        if ($pagingOrders->isEmpty()) {
+            return [
+                'data' => [],
+                'current_page' => $pagingOrders->getCurrentPage(),
+            ];
+        }
+        $data = $pagingOrders->hidden(['snap_items','snap_address','prepay_id'])->toArray();
+        return [
+            'data' => $data,
+            'current_page' => $pagingOrders->getCurrentPage(),
+        ];
+    }
 }
