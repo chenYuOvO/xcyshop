@@ -18,4 +18,12 @@ class Order extends BaseModel {
     protected $autoWriteTimestamp = true;
     protected $hidden = ['user_id', 'delete_time', 'update_time'];
 
+    public static function getSummaryByUser($uid, $page = 1, $size = 15) {
+
+        $paginateData = self::where(['user_id', '=', $uid])
+                ->order('create_time desc')
+                ->paginate($size, FALSE, ['page' => $page]);
+        return $paginateData;
+    }
+
 }
