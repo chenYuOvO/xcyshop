@@ -13,7 +13,9 @@ use app\api\validate\OrderPlace;
 use app\api\service\Token as TokenService;
 use app\api\service\Order as OrderService;
 use app\api\model\Order as OrderModel;
-use app\api\validate\pagingParameter;
+use app\api\validate\PagingParameter;
+use app\api\validate\IDMustBePostiveInt;
+use app\lib\exception\OrderException;
 /**
  * Description of Order
  *
@@ -33,7 +35,7 @@ class Order extends BaseController {
     //支付成功后，减去库存量；失败，返回一个失败的结果
     protected $beforeActionList = [
         'checkExclusiveScope' => ['only' => 'placeOrder'],
-        'checkPrimaryScope' => ['only' => 'getSummaryByUser']
+        'checkPrimaryScope' => ['only' => 'getDetail,getSummaryByUser']
     ];
 
     /**
@@ -53,7 +55,7 @@ class Order extends BaseController {
      * @param type $size
      */
     public function getSummaryByUser($page = 1, $size = 15) {
-        (new pagingParameter())->goCheck();
+        (new PagingParameter())->goCheck();
         $uid = TokenService::getCurrentUid();
         $pagingOrders = OrderModel::getSummaryByUser($uid, $page, $size);
         if ($pagingOrders->isEmpty()) {
@@ -67,5 +69,19 @@ class Order extends BaseController {
             'data' => $data,
             'current_page' => $pagingOrders->getCurrentPage(),
         ];
+    }
+    /**
+     * 订单详情
+     * @param type $id
+     * @return type
+     * @throws OrderException
+     */
+    public function getDetail($id) {
+        (new IDMustBePostiveInt() )->goCheck();
+        $orderDetail = OrderModel::get($id);
+        if(!$orderDetail){
+            throw new OrderException();
+        }
+        return $orderDetail->hidden(['prepay_id']);
     }
 }

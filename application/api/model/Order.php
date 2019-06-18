@@ -17,7 +17,22 @@ class Order extends BaseModel {
 
     protected $autoWriteTimestamp = true;
     protected $hidden = ['user_id', 'delete_time', 'update_time'];
-
+    
+    public function getSnapAddressAttr($value)
+    {
+        if(empty($value)){
+            return null;
+        }
+        return json_decode($value);
+    }
+    public function getSnapItemsAttr($value)
+    {
+        if(empty($value)){
+            return null;
+        }
+        return json_decode($value);
+    }
+    
     public static function getSummaryByUser($uid, $page = 1, $size = 15) {
 
         $paginateData = self::where('user_id', '=', $uid)
